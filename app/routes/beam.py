@@ -76,6 +76,86 @@ def beam_balanced_analysis():
                     'kd': _result.kd})
 
 
+@app.route('/beam-capacity-analysis', methods=['POST'])
+def beam_capacity_analysis():
+    _sd = StressDistribution.WHITNEY
+    args = request.json
+
+    _main_section_args = args['main_section']
+
+    # Do some checking for nodes for the main section.
+    if not _main_section_args:
+        return jsonify(has_error('Main section nodes not defined.'))
+
+    if len(_main_section_args) < 3:
+        return jsonify(has_error('Main section nodes must be equal or more than 3.'))
+
+    _main_section = []
+    for _ms in args['main_section']:
+        _node: Node = Node(_ms[0], _ms[1])
+        _main_section.append(_node)
+
+    _clippings = []
+
+    if 'clippings' in args:
+        if args['clippings']:
+            for _clipping_args in args['clippings']:
+                _clipping = []
+                for _clip_node in _clipping_args:
+                    _clipping.append(Node(_clip_node[0], _clip_node[1]))
+                _clippings.append(_clipping)
+
+    _section = Section()
+    _section.set_main_section(_main_section)
+    _section.set_clippings(_clippings)
+
+    _bs = BeamSection()
+    _bs.section = _section
+
+    if 'unit' in args:
+        if args['unit'] == 0:
+            _bs.unit = Unit.ENGLISH
+
+    if 'fc_prime' not in args:
+        return jsonify(has_error('F\'c not defined.'))
+
+    if 'fy' not in args:
+        return jsonify(has_error('Fy not defined.'))
+
+    if 'effective_depth' not in args:
+        return jsonify(has_error('Effective depth not defined.'))
+
+    if 'stress_distribution' in args:
+        # In the frontend, indicate 0 for parabolic and 1 for whitney
+        if args['stress_distribution'] == 0:
+            _sd = StressDistribution.PARABOLIC
+
+    if 'As' not in args:
+        return jsonify(has_error('Tensile reinforcement area (As) not defined.'))
+
+    _bs.set_fc_prime(args['fc_prime'])  # Set the f'c
+    _bs.set_fy(args['fy'])  # Set the fy
+    _bs.set_effective_depth(args['effective_depth'])  # Set effective depth
+
+    _steel_tension = SteelTension()
+    _steel_tension.set_total_area(args['As'], _bs.unit)
+
+    _steel_compression = SteelCompression()
+    if 'As_Prime' in args:
+        _steel_compression.set_total_area(args['As_Prime'], _bs.unit)
+
+    _bs.steel_tension = _steel_tension
+    _bs.steel_compression = _steel_compression
+
+    _analyses = BeamAnalyses()
+    _analyses.beam_section = _bs
+    _result = _analyses.beam_capacity_analysis(_sd)
+
+    return jsonify({'moment': _result.moment_c,
+                    'curvature': _result.curvature_c,
+                    'kd': _result.kd})
+
+
 def has_error(error_message):
     """
     Returns an error object.
