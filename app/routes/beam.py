@@ -31,8 +31,19 @@ def beam_balanced_analysis():
         _node: Node = Node(_ms[0], _ms[1])
         _main_section.append(_node)
 
+    _clippings = []
+
+    if 'clippings' in args:
+        if args['clippings']:
+            for _clipping_args in args['clippings']:
+                _clipping = []
+                for _clip_node in _clipping_args:
+                    _clipping.append(Node(_clip_node[0], _clip_node[1]))
+                _clippings.append(_clipping)
+
     _section = Section()
     _section.set_main_section(_main_section)
+    _section.set_clippings(_clippings)
 
     _bs = BeamSection()
     _bs.section = _section
