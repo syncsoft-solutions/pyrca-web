@@ -11,6 +11,7 @@ https://pyrca-web-api.herokuapp.com
 
 
 #### Beam Balanced Flexure Analysis
+Balanced analysis for beams.
 Endpoint: ```beam-balanced-analysis```
 
 Json parameters:
