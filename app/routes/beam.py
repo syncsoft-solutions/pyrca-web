@@ -30,6 +30,8 @@ def beam_balanced_analysis():
 
     _main_section = []
     for _ms in _main_section_args:
+        if len(_ms) < 2:
+            return has_error('Node is missing an element.')
         _node: Node = Node(_ms[0], _ms[1])
         _main_section.append(_node)
 
@@ -111,6 +113,8 @@ def beam_capacity_analysis():
 
     _main_section = []
     for _ms in _main_section_args:
+        if len(_ms) < 2:
+            return has_error('Node is missing an element.')
         _node: Node = Node(_ms[0], _ms[1])
         _main_section.append(_node)
 
@@ -164,6 +168,8 @@ def beam_capacity_analysis():
     _steel_compression = SteelCompression()
     if 'As_Prime' in args:
         _steel_compression.set_total_area(float(args['As_Prime']), _bs.unit)
+    if 'd_prime' in args:
+        _steel_compression.set_d_prime(float(args['d_prime']), _bs.unit)
 
     _bs.steel_tension = _steel_tension
     _bs.steel_compression = _steel_compression
