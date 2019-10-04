@@ -94,7 +94,7 @@ def beam_balanced_analysis():
 @app.route('/beam-capacity-analysis', methods=['POST'])
 def beam_capacity_analysis():
     _sd = StressDistribution.WHITNEY
-    args = request.json
+    args = request.get_json()
 
     if not args:
         return has_error('JSON request can\'t be parsed.')
