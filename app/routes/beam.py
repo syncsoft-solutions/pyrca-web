@@ -146,9 +146,6 @@ def beam_capacity_analysis():
     if 'effective_depth' not in args:
         return jsonify(has_error('Effective depth not defined.'))
 
-    if 'd_prime' not in args:
-        return jsonify(has_error('Compression reinforcement location (d\') not defined.'))
-
     if 'stress_distribution' in args:
         # In the frontend, indicate 0 for parabolic and 1 for whitney
         if args['stress_distribution'] == 0:
@@ -167,6 +164,8 @@ def beam_capacity_analysis():
     _steel_compression = SteelCompression()
     if 'As_Prime' in args:
         _steel_compression.set_total_area(float(args['As_Prime']), _bs.unit)
+    if 'd_prime' in args:
+        _steel_compression.set_d_prime(float(args['d_prime']), _bs.unit)
 
     _bs.steel_tension = _steel_tension
     _bs.steel_compression = _steel_compression
