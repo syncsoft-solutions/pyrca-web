@@ -1,5 +1,6 @@
 from app import app, api
 from flask import jsonify, request
+import ast
 
 from pyrca.properties.node import Node
 from pyrca.properties.section import Section
@@ -18,6 +19,7 @@ def beam_balanced_analysis():
     args = request.json
 
     _main_section_args = args['main_section']
+    _main_section_args = ast.literal_eval(_main_section_args)
 
     # Do some checking for nodes for the main section.
     if not _main_section_args:
@@ -27,7 +29,7 @@ def beam_balanced_analysis():
         return jsonify(has_error('Main section nodes must be equal or more than 3.'))
 
     _main_section = []
-    for _ms in args['main_section']:
+    for _ms in _main_section_args:
         _node: Node = Node(_ms[0], _ms[1])
         _main_section.append(_node)
 
@@ -50,7 +52,7 @@ def beam_balanced_analysis():
 
     # Get the unit
     if 'unit' in args:
-        if args['unit'] == 0:
+        if int(args['unit']) == 0:
             _bs.unit = Unit.ENGLISH
 
     if 'fc_prime' not in args:
@@ -64,12 +66,12 @@ def beam_balanced_analysis():
 
     if 'stress_distribution' in args:
         # In the frontend, indicate 0 for parabolic and 1 for whitney
-        if args['stress_distribution'] == 0:
+        if int(args['stress_distribution']) == 0:
             _sd = StressDistribution.PARABOLIC
 
-    _bs.set_fc_prime(args['fc_prime'])                  # Set the f'c
-    _bs.set_fy(args['fy'])                              # Set the fy
-    _bs.set_effective_depth(args['effective_depth'])    # Set effective depth
+    _bs.set_fc_prime(float(args['fc_prime']))                  # Set the f'c
+    _bs.set_fy(float(args['fy']))                              # Set the fy
+    _bs.set_effective_depth(float(args['effective_depth']))    # Set effective depth
 
     _steel_tension = SteelTension()
     _steel_compression = SteelCompression()
