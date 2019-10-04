@@ -31,6 +31,7 @@ def beam_balanced_analysis():
     _main_section = []
     for _ms in _main_section_args:
         if len(_ms) < 2:
+            print(_ms)
             return has_error('Node is missing an element.')
         _node: Node = Node(_ms[0], _ms[1])
         _main_section.append(_node)
