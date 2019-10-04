@@ -36,6 +36,8 @@ def beam_balanced_analysis():
     _clippings = []
 
     if 'clippings' in args:
+        _clipping_args = args['clippings']
+        _clipping_args = ast.literal_eval(_clipping_args)
         if args['clippings']:
             for _clipping_args in args['clippings']:
                 _clipping = []
@@ -95,6 +97,7 @@ def beam_capacity_analysis():
     args = request.json
 
     _main_section_args = args['main_section']
+    _main_section_args = ast.literal_eval(_main_section_args)
 
     # Do some checking for nodes for the main section.
     if not _main_section_args:
@@ -104,14 +107,16 @@ def beam_capacity_analysis():
         return jsonify(has_error('Main section nodes must be equal or more than 3.'))
 
     _main_section = []
-    for _ms in args['main_section']:
+    for _ms in _main_section_args:
         _node: Node = Node(_ms[0], _ms[1])
         _main_section.append(_node)
 
     _clippings = []
 
     if 'clippings' in args:
-        if args['clippings']:
+        _clipping_args = args['clippings']
+        _clipping_args = ast.literal_eval(_clipping_args)
+        if _clipping_args:
             for _clipping_args in args['clippings']:
                 _clipping = []
                 for _clip_node in _clipping_args:
@@ -126,7 +131,7 @@ def beam_capacity_analysis():
     _bs.section = _section
 
     if 'unit' in args:
-        if args['unit'] == 0:
+        if int(args['unit']) == 0:
             _bs.unit = Unit.ENGLISH
 
     if 'fc_prime' not in args:
@@ -146,16 +151,16 @@ def beam_capacity_analysis():
     if 'As' not in args:
         return jsonify(has_error('Tensile reinforcement area (As) not defined.'))
 
-    _bs.set_fc_prime(args['fc_prime'])  # Set the f'c
-    _bs.set_fy(args['fy'])  # Set the fy
-    _bs.set_effective_depth(args['effective_depth'])  # Set effective depth
+    _bs.set_fc_prime(float(args['fc_prime']))  # Set the f'c
+    _bs.set_fy(float(args['fy']))  # Set the fy
+    _bs.set_effective_depth(float(args['effective_depth']))  # Set effective depth
 
     _steel_tension = SteelTension()
-    _steel_tension.set_total_area(args['As'], _bs.unit)
+    _steel_tension.set_total_area(float(args['As']), _bs.unit)
 
     _steel_compression = SteelCompression()
     if 'As_Prime' in args:
-        _steel_compression.set_total_area(args['As_Prime'], _bs.unit)
+        _steel_compression.set_total_area(float(args['As_Prime']), _bs.unit)
 
     _bs.steel_tension = _steel_tension
     _bs.steel_compression = _steel_compression
