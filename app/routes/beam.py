@@ -96,6 +96,9 @@ def beam_capacity_analysis():
     _sd = StressDistribution.WHITNEY
     args = request.json
 
+    if not args:
+        return has_error('JSON request can\'t be parsed.')
+
     _main_section_args = args['main_section']
     _main_section_args = ast.literal_eval(_main_section_args)
 
