@@ -153,7 +153,7 @@ def beam_capacity_analysis():
 
     if 'stress_distribution' in args:
         # In the frontend, indicate 0 for parabolic and 1 for whitney
-        if args['stress_distribution'] == 0:
+        if args['stress_distribution'] == '0':
             _sd = StressDistribution.PARABOLIC
 
     if 'As' not in args:
